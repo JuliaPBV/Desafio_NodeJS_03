@@ -39,61 +39,70 @@ app.listen(PORT, () => {
 
 	// CÓDIGO PARA ATENDER OS REQUERIMENTOS
 	// R01, R02, R03, R04, R05
-	
-const readline = require ('readline');
-const rl = readline.createInterface({
 
-  input: process.stdin,
-  output: process.stdout
-});
+  class Aluno{
+    nome: string;
+    nota: number;
 
-let quantidadeAlunos: number;
-let nomeMelhorAluno: string;
-let melhorNota: number = -Infinity; 
-
-function perguntarQuantidadeAlunos() {
-  rl.question('Quantos alunos você deseja cadastrar? ', (alunosQt: any) => {
-    quantidadeAlunos = parseInt(alunosQt); 
-    if (quantidadeAlunos <= 0 || isNaN(quantidadeAlunos)) {
-		console.log('Por favor, insira um número válido de alunos.');
-		perguntarQuantidadeAlunos(); 
-	} else {
-      cadastrarAlunos();
+    constructor(nome: string, nota: number){
+        this.nome = nome;
+        this.nota = nota;
     }
-  });
 }
 
-function cadastrarAlunos() {
-  let alunosCadastrados = 0;
+class Cadastro{
+    alunos: Aluno[];
+    quantidade: number;
 
-  function cadastrarProximoAluno() {
-    rl.question(`Nome do aluno ${alunosCadastrados + 1}: `, (nome: any) => {
-      rl.question(`Nota do aluno ${alunosCadastrados + 1}: `, (nota: any) => {
-        const notaAluno = parseFloat(nota); 
-        if (isNaN(notaAluno) || notaAluno < 0 || notaAluno > 10) {
-          console.log('Por favor, insira uma nota válida entre 0 e 10.');
-          cadastrarProximoAluno(); 
-        } else {
-          if (notaAluno > melhorNota) {
-            melhorNota = notaAluno;
-            nomeMelhorAluno = nome;
-          }
+    constructor(quantidade: number) {
+        this.alunos = [];
+        this.quantidade = quantidade;
+    }
 
-          alunosCadastrados++;
-          if (alunosCadastrados < quantidadeAlunos) {
-            cadastrarProximoAluno();
-          } else {
-            console.log(`O aluno com a maior nota é ${nomeMelhorAluno} com nota ${melhorNota}`);
-            rl.close(); 
-          }
+    cadastrarAluno(nome: string, nota: number){
+        const aluno = new Aluno(nome, nota);
+        this.alunos.push(aluno);
+    }
+
+    mostrarQuantidadeAlunos(){
+       console.log(`Quantos alunos deseja cadastra? ${this.quantidade}`);
+       return this.quantidade;
+    }
+
+    mostrarAlunos(){
+        for(let i = 0; i < this.alunos.length; i++) {
+            const aluno = this.alunos[i];
+            console.log(`Aluno ${i + 1}: ${aluno.nome}, Nota: ${aluno.nota}`);
         }
-      });
-    });
-  }
+    }
 
-  cadastrarProximoAluno();
+    mostrarMelhorAluno(){
+        if(this.alunos.length === 0) {
+            console.log('Não há alunos cadastrados.');
+        }
+
+        let melhorNota = 0;
+        let melhorAluno = '';
+
+        for (const aluno of this.alunos){
+            if (aluno.nota > melhorNota){
+                melhorNota = aluno.nota;
+                melhorAluno = aluno.nome;
+            }
+        }
+
+        console.log(`O aluno com a maior nota é: ${melhorAluno}, Nota: ${melhorNota}`);
+    }
 }
+const cadastro = new Cadastro(3);
+cadastro.mostrarQuantidadeAlunos();
 
-perguntarQuantidadeAlunos();
+cadastro.cadastrarAluno('Jonas', 8);
+cadastro.cadastrarAluno('Luiz', 8);
+cadastro.cadastrarAluno('Jorge', 10);
+
+cadastro.mostrarAlunos();
+cadastro.mostrarMelhorAluno();
+
 
 });
